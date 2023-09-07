@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>get user location </title>
+ 
+</head>
+<body>
+  <h1>user location</h1>
+  <p></p>
+  <button onclick="getlocation()">get location</button>
+</body>
+<script>
+
+
+    const   getlocation = ()=>{
+      if(navigator.geolocation){
+        navigator.geolocation.getCurrentPosition(showPosition,showError)
+      }
+      else{
+        alert("GeoLocator is not supported by this browser")
+      }
+    }
+    
+    const showPosition =(position)=>{
+        let lat = position.coords.latitude;
+        let long = position.coords.longitude;
+        const des = document.querySelector("p"); 
+        console.log(lat , long)   
+   // apikey = AIzaSyCqnKefMComMGAFW1L_ju1AFwaeQxuGkog
+
+fetch(`https://api.opencagedata.com/geocode/v1/json?q=${lat}+${long}&key=9171d626db6548f8b0bd00e4df11a4c4`)
+.then(response => response.json()).then(result => {
+    let allDetails = result.results[0].components;
+    let {county ,postcode , country} = allDetails
+    des.innerHTML = `${county} ${postcode} ${country}`;
+    console.log(result);
+})
+}
+
+    const showError = (error)=>{
+       switch(error.code){
+        case error.PERMISSION_DENIED:
+        alert("User denied the request for geolocation");
+        break;
+ 
+      case error.POSITION_UNAVAILABLE:
+        alert('Location information is unavilable');
+        break;
+
+        case error.TIMEOUT:
+         alert("The request to get user location timed out.");
+         break;
+         case error.UNKNOWN_ERROR:
+         alert("An unknown error occurred");
+         break;
+         default:
+          alert("An unknown error occurred");
+      }
+    }     
+</script>
+</html>
